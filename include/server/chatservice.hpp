@@ -6,7 +6,9 @@
 #include <mutex>
 #include "json.hpp"
 #include "usermodel.hpp"
+#include "friendmodel.hpp"
 #include "offllinemessagemodel.hpp"
+#include "groupmodel.hpp"
 using namespace std;
 using namespace muduo;
 using namespace muduo::net;
@@ -14,6 +16,7 @@ using json = nlohmann::json;
 // 处理消息事件回调方法类型
 using MsgHandler = std::function<void(const TcpConnectionPtr &conn, json &js, Timestamp time)>;
 // 单例模式 懒汉式 静态单例模式
+// 服务层代码
 class ChatService
 {
 public:
@@ -31,6 +34,14 @@ public:
     void clientCloseException(const TcpConnectionPtr &conn);
     // 服务器异常，业务重置方法
     void reset();
+    // 添加好友业务
+    void addFriend(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 创建群组业务
+    void creatGroup(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 加入群组
+    void addGroup(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 群聊天业务
+    void groupChat(const TcpConnectionPtr &conn, json &js, Timestamp time);
 private:
     ChatService();
     // ~ChatService();
@@ -46,9 +57,12 @@ private:
     UserModel _usermodel;
     // 调用offlinemessage数据库
     OfflineMsg _offlinemsg;
+    // friend好友guanxi
+    FriendModel _friendmode;
     // 定义互斥锁 保证_userConnMap安全
     mutex _connMtx;
-
+    // groupmode
+    GroupModel _groupmodel;
     
     
 };

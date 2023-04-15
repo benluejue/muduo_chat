@@ -5,6 +5,7 @@
 #include <functional>
 using namespace muduo;
 using namespace muduo::net;
+// 网络层代码
 class ChatServer
 {
 public:
