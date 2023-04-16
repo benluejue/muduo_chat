@@ -68,7 +68,7 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
             json response;
             response["msgid"] = LOGIN_MSG_ACK;
             response["errno"] = 2;
-            response["errmsg"] = "该用户已经登录，请重新输入账号密码";
+            response["errmsg"] = "the user has logined,please enter other id";
             response["id"] = user.getId();
             conn->send(response.dump());
         }
@@ -120,7 +120,7 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
         json response;
         response["msgid"] = LOGIN_MSG_ACK;
         response["errno"] = 1;
-        response["errmsg"] = "用户不存在!";
+        response["errmsg"] = "the user is invalid!";
         conn->send(response.dump());
     }
 }
