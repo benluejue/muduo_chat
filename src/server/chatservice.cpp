@@ -111,6 +111,17 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
                 }
                 response["friend"]=vec;
             }
+            // 查询用户群组信息
+            vector<Group> groupVec = _groupmodel.queryGroups(id);
+            if( !groupVec.empty() )
+            {
+                vector<string>vec3;
+                for(Group& group : groupVec)
+                {
+                    json js;
+                    js["id"] = group.getId();
+                }
+            }
             conn->send(response.dump());
         }
     }

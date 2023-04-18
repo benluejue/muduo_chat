@@ -60,6 +60,7 @@ int main()
 {
     /**
      * json序列化
+     * 将string或者其他对象变化为json格式
      */
     json js;
     // 直接序列化一个vector容器
@@ -79,6 +80,8 @@ int main()
     
     /**
      * json 反序列化
+     * 将接受到的字符串转化为json
+     * json js2 = json::parse(jsonstr);
      */
     js["name"] = "zhang san";
     string jsonstr = js.dump();

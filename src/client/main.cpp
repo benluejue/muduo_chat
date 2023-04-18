@@ -17,7 +17,7 @@
 using namespace std;
 using json = nlohmann::json;
 
-// 记录当前系统登录的用户信息
+// 记录当前系统登录的用户信息 不能一直从服务器读，要求保存在本地
 User g_currentUser;
 // 记录当前用户的好友列表信息
 vector<User> g_currentUserFriendList;
@@ -83,23 +83,123 @@ int main(int argc, char *argv[])
                 // 输入id password
                 json js;
                 int id = 0;
+                cout<<"input your id: ";
                 cin>>id;
                 cin.get();
                 char pwd[50] = {0};
+                cout<<"input your password: ";
                 cin.getline(pwd, 50);
                 
                 js["id"]=id;
                 js["msgid"] = LOGIN_MSG;
                 js["password"] = pwd;
                 string request = js.dump();
-                if( send(clientfd, request.c_str(), strlen( request.c_str() ), 0) == -1)
+                if( send(clientfd, request.c_str(), strlen( request.c_str() )+1, 0) == -1)
                     cerr<<"send fail!!! what you send is "<<request<<endl;
+                else
+                {
+                    char buffer[1024]={0};
+                    if( recv(clientfd, buffer, 1024, 0) == -1)
+                    {
+                        cerr<<"recv fail! login fail!!"<<endl;
+                    }
+                    else
+                    {
+                        json request = json::parse(buffer);
+                        int response_errn =  request["errno"].get<int>();
+                        if( response_errn == 2)
+                        {
+                            // 不许重新登录
+                            cerr<<request["errmsg"]<<endl;
+                        }
+                        else if( response_errn == 0)
+                        {
+                            cout<<"login sucess!!!!"<<endl;
+                            g_currentUser.setId(request["id"].get<int>());
+                            g_currentUser.setName( request["name"] );
+                            g_currentUser.setState( request["state"]);
+
+                            if(request.contains("friend"))
+                            {
+                                vector<string> friends = request["friend"];
+                                for(auto afriend:friends)
+                                {
+                                    User user;
+                                    json js = json::parse(afriend);
+                                    user.setId(js["id"].get<int>());
+                                    user.setName(js["name"]);
+                                    user.setState(js["state"]);
+                                    g_currentUserFriendList.push_back(user);
+                                }
+                            }
+                            if( request.contains("friend") )
+                            {
+                                
+                            }
+
+                        }
+                        else if( response_errn == 1)
+                        {
+                            // 用户不存在或密码错误   者登录失败
+                            cerr<<request["errmsg"]<<endl;
+                        }
+                    }
+                }
                 
             }
+            break;
+            case 2:
+            {
+                // 注册业务
+                json js;
+                char name[50] = {0};
+                char pwd[50] = {0};
+                cout<<"cin user name: ";
+                // 好处遇到空格不会回车
+                cin.getline(name, 50);
+                cout<<"cin user password: ";
+                cin.getline(pwd, 50);
+                js["msgid"] = REG_MSG;
+                js["name"] = name;
+                js["password"] = pwd;
+                string request = js.dump();
+                if( send(clientfd, request.c_str(), strlen(request.c_str())+1, 0) == -1)
+                {
+                    cerr<<"login send fail!! "<<request<<endl;
+                }
+                else
+                {
+                    char buffer[1024]={0};
+                    if( recv(clientfd, buffer, 1024, 0) == -1)
+                    {
+                        // 和cout的区别 cerr不会被缓冲，可以直接输出出来
+                        cerr<<"recv fail!"<<endl;
+                    }else
+                    {
+                        // string转js
+                        json response = json::parse(buffer);
+                        int response_errn = response["errno"].get<int>();
+                        // 注册成功
+                        if(response_errn == 0)
+                        {
+                            cout<<"your id is "<<response["id"]<<" dont forget it"<<endl;
+                        }
+                        else
+                        {
+                            cerr<<"reg fail"<<endl;
+                        }
+                    }
+                }
+
+            }
+            break;
             case 3:
             {
-                break;
+                exit(0);
             }
+            default:
+                cerr<<"invalue input!"<<endl;
+                break;
         }
     }
 
