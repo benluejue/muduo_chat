@@ -10,6 +10,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <thread>
 #include "group.hpp"
 #include "user.hpp"
 #include "public.hpp"
@@ -118,7 +119,7 @@ int main(int argc, char *argv[])
                             g_currentUser.setId(request["id"].get<int>());
                             g_currentUser.setName( request["name"] );
                             g_currentUser.setState( request["state"]);
-
+                            
                             if(request.contains("friend"))
                             {
                                 vector<string> friends = request["friend"];
@@ -132,11 +133,49 @@ int main(int argc, char *argv[])
                                     g_currentUserFriendList.push_back(user);
                                 }
                             }
-                            if( request.contains("friend") )
+                            if( request.contains("group") )
                             {
-                                
+                                vector<string> groups = request["group"];
+                                for(auto agroup:groups)
+                                {
+                                    Group group;
+                                    json js = json::parse(agroup);
+                                    group.setId(js["id"].get<int>());
+                                    group.setGroupName(js["groupname"]);
+                                    group.setGroupDesc(js["groupdesc"]);
+                                    vector<string> groupusers = js["users"];
+                                    for( auto agroupuser:groupusers)
+                                    {
+                                        GroupUser user;
+                                        json js = json::parse(agroupuser);
+                                        user.setId(js["id"].get<int>());
+                                        user.setName(js["name"]);
+                                        user.setRole(js["role"]);
+                                        user.setState(js["state"]);
+                                        // 先get再 push_back
+                                        group.getUsers().push_back(user);
+                                    }
+                                    
+                                    g_currentUserGroupList.push_back(group);
+                                }
                             }
-
+                            // 显示登录用户的基本信息
+                            showCurrentUserData();
+                            // 显示个人的离线信息
+                            if( request.contains("offlinemessage") )
+                            {
+                                vector<string> offlinemsgs;
+                                for(auto offlinemsg:offlinemsgs)
+                                {
+                                    json js = json::parse(offlinemsg);
+                                    cout<<js["from"]<<"("<<js["id"]<<")"<<" said "<<js["msg"]<<endl;
+                                }
+                            }
+                            // 登录成功之后，启动线程负责接受数据
+                            std::thread t(readTaskHandler, clientfd);
+                            t.detach();
+                            // 返回主页面
+                            mainMeau();
                         }
                         else if( response_errn == 1)
                         {
@@ -204,4 +243,19 @@ int main(int argc, char *argv[])
     }
 
     return 0;
+}
+
+void showCurrentUserData()
+{
+    cout<<"============CurrentUserData=============="<<endl;
+}
+
+void mainMeau()
+{
+    cout<<"================mainMeau====================="<<endl;
+}
+
+void readTaskHandler(int clientfd)
+{
+    cout<<"================="<<endl;
 }

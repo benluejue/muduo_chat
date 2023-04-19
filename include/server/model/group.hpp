@@ -26,6 +26,7 @@ public:
     void setGroupName(string groupname) { this->groupname = groupname; }
     void setGroupDesc(string groupdesc) { this->groupdesc = groupdesc; }
     
+    
 private:
     int id;
     string groupname;
