@@ -122,6 +122,7 @@ int main(int argc, char *argv[])
                             
                             if(request.contains("friend"))
                             {
+                                cout<<"find friend a"<<endl;
                                 vector<string> friends = request["friend"];
                                 for(auto afriend:friends)
                                 {
@@ -155,7 +156,6 @@ int main(int argc, char *argv[])
                                         // 先get再 push_back
                                         group.getUsers().push_back(user);
                                     }
-                                    
                                     g_currentUserGroupList.push_back(group);
                                 }
                             }
@@ -247,7 +247,34 @@ int main(int argc, char *argv[])
 
 void showCurrentUserData()
 {
-    cout<<"============CurrentUserData=============="<<endl;
+    cout<<"============login user=============="<<endl;
+    cout<<"current login user id: "<<g_currentUser.getId()<<" name: "<<
+            g_currentUser.getName()<<endl;
+    cout<<"--------------friend list------------"<<endl;
+    // vector<User> g_currentUserFriendList;
+    if(!g_currentUserFriendList.empty() )
+    {
+        cout<<"id"<<" name     state"<<endl;
+        for(auto afriend:g_currentUserFriendList)
+        {
+            cout<<afriend.getId()<<" "<<afriend.getName()<<" "<<afriend.getState()<<endl;
+        }
+    }
+    
+    cout<<"-------------group list------------"<<endl;
+     if (!g_currentUserGroupList.empty())
+    {   
+        cout<<"id"<<" name     state"<<endl;
+        for (Group &group : g_currentUserGroupList)
+        {
+            cout << group.getId() << " " << group.getGroupName() << " " << group.getGroupDesc() << endl;
+            for (GroupUser &user : group.getUsers())
+            {
+                cout << user.getId() << " " << user.getName() << " " << user.getState()
+                     << " " << user.getRole() << endl;
+            }
+        }
+    }
 }
 
 void mainMeau()

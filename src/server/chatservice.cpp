@@ -89,6 +89,7 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
             response["errno"] = 0;
             response["id"] = user.getId();
             response["name"] = user.getName();
+            response["state"] = user.getState();
             // 查询该用户是否有离线信息
             vector<string> vec = _offlinemsg.query(id);
             if( !vec.empty() )
@@ -108,9 +109,9 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
                     js["id"]=user.getId();
                     js["name"] = user.getName();
                     js["state"] = user.getState();
-                    vec.push_back(js.dump());
+                    vec2.push_back(js.dump());
                 }
-                response["friend"]=vec;
+                response["friend"]=vec2;
             }
             // 查询用户群组信息
             vector<Group> groupVec = _groupmodel.queryGroups(id);

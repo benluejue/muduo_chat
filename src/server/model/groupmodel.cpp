@@ -44,8 +44,9 @@ vector<Group> GroupModel::queryGroups(int userid)
     // c_str()将string风格转化为c语言的char*风格
     // -- 显式内连接
     // select 字段列表 from 表1,[inner] join  表2 on 连接条件
+    // 
     sprintf(sql, "select a.id,a.groupname, a.groupdesc from allgroup a inner join \
-            groupuser b on a.id=b.userid where b.userid=%d",
+            groupuser b on a.id=b.groupid where b.userid=%d",
             userid);
     MySQL mysql;
     if (mysql.connect())
@@ -78,7 +79,7 @@ vector<Group> GroupModel::queryGroups(int userid)
 
     for(Group &group : vec)
     {
-        sprintf(sql, "select a.id,a.name, a.sate b.grouprole from user a inner join \
+        sprintf(sql, "select a.id, a.name, a.state, b.grouprole from user a inner join \
             groupuser b on b.userid=a.id where b.groupid=%d",
             group.getId());
         MYSQL_RES * res = mysql.query(sql);
