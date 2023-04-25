@@ -11,6 +11,9 @@ enum EnMsgTyep{
     ONE_CHAT_MSG, // 聊天信息
     ADD_FRIEND_MSG, //添加好友
     GROUP_CHAT_MSG,  //群聊信息
-    ADD_GROUP_MSG   // 添加群
+    ADD_GROUP_MSG,   // 添加群
+    CREATE_GROUP_MSG,
+    LOGINOUT_MSG
 };
+#define MSGID "msgid"
 #endif

@@ -66,7 +66,7 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
         {
             // 不许重新登录
             json response;
-            response["msgid"] = LOGIN_MSG_ACK;
+            response[MSGID] = LOGIN_MSG_ACK;
             response["errno"] = 2;
             response["errmsg"] = "the user has logined,please enter other id";
             response["id"] = user.getId();
@@ -208,7 +208,7 @@ void ChatService::clientCloseException(const TcpConnectionPtr &conn)
 void ChatService::oneChat(const TcpConnectionPtr &conn, json &js, Timestamp time)
 {
     LOG_INFO << "oneChat service!!!";
-    int toid = js["to"].get<int>();
+    int toid = js["toid"].get<int>();
     // 锁的力度要小，lock_guard出了作用域就释放了锁
     {
         lock_guard<mutex>lock(_connMtx);
