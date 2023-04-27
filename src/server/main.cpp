@@ -9,12 +9,19 @@ void resetHandler(int)
     ChatService::getInstance()->reset();
     exit(0);
 }
-int main()
+int main(int argc, char **argv)
 {
+    if( argc < 3)
+    {
+        cerr<<"Usage ./ChatServer 127.0.0.1 6000 or 6002"<<endl;
+        exit(-1);
+    }
     // 中断信号触发
     signal(SIGINT, resetHandler);
     EventLoop loop; // 相当于创建一个epoll
-    InetAddress addr("127.0.0.1", 6000);
+    char *ip = argv[1];
+    uint16_t port = atoi(argv[2]);
+    InetAddress addr(ip, port);
     ChatServer server(&loop, addr, "chat server");
 
     server.start(); // 将listenfd添加到 epoll_ctl

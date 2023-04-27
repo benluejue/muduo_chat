@@ -28,6 +28,8 @@ ChatService::ChatService()
     _msgHandlerMap.insert({ADD_FRIEND_MSG, std::bind(&ChatService::addFriend, this, _1,_2,_3)});
     _msgHandlerMap.insert({GROUP_CHAT_MSG, std::bind(&ChatService::creatGroup, this, _1, _2, _3)});
     _msgHandlerMap.insert({ADD_GROUP_MSG, std::bind(&ChatService::addGroup, this, _1, _2, _3)});
+
+    
 }
 
 // 获取消息对应的处理器

@@ -3,6 +3,7 @@
 + 1 json 序列化与逆序列化
 + 2 c++连接数据库
 + 3 单例模式实现ChatService
++ 4 nginx 负载均衡
 ## 实现功能
 ## 开发环境
 + 1 基于WSL2下的Ubuntu 20.04
@@ -108,5 +109,54 @@ int main()
     }
     cout << endl;
 }
+```
+
+## Nginx
+### 安装
+使用版本为nginx 1.12.2,拷贝到任意目录后，解压，使用root用户，执行命令./configure --with-stream，然后make && make install    
+如果安装好，我们可以在/usr/local/nginx下看到。
+### 启动
+可执行文件在sbin目录里面，在该文件下执行./nginx，后启动nginx
+nginx -s reload 重新加载配置文件启动。
+nginx -s stop 停止nginx服务。
+启动后，netstat -tanp 可以看到
+
+tcp  0  0 0.0.0.0:80    0.0.0.0:*   LISTEN   13631/nginx: master
+
+### 修改/usr/local/nginx/conf# vim nginx.conf
+在nginx.conf里面对要配置的东西进行修改
+```sh
+stream{
+   upstream Myserver{
+        # 端口weight权重 max_fails设置服务器最大失败次数 
+        server 127.0.0.1:6000 weight=1,max_fails=3 fail_timeout=30s;
+        server 127.0.0.1:6002 weight=1,max_fails=3 fail_timeout=30s;
+   } 
+   server{
+     # 设置超时时间
+     proxy_connect_timeout 1s;
+     # 负载均衡端口，信息发送到这个端口上
+     listen 8000; 
+     # 请求转移的服务器
+     proxy_pass Myserver;
+     tcp_nodelay on;
+   }
+}
+
+```
+### redis
+后台启动
+redis-server &  
+通过命令ps -ef | grep redis（-e选项用于显示所有进程，-f选项用于显示进程的详细信息，'|'管道，前面的命令当做后面的输入，grep 过滤信息） 查看是否运行在后台，或者netstat -tanp  
+`redis-cli`启动redis客户端。
+### redis发布-订阅的客户端编程
+为了使redis支持我们写的客户端，首先要下载对应的客户端hiredis,然后：
+```sh
+git clone https://github.com/redis/hiredis.git
+cd hiredis
+make
+sudo make install 
+拷贝生成的动态库到/usr/local/lib目录下！
+sudo ldconfig /usr/local/lib
 ```
 
