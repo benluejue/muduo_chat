@@ -1,4 +1,20 @@
 # 基于C++实现的集群聊天服务器
+### 如何运行
+在满足开发环境后
+```sh
+cd build
+cmake ..
+make
+cd ../bin
+# 启动服务器
+./ChatServer 127.0.0.1 6000
+# 启动客户端
+./ChatClient 127.0.0.1 6000
+```
+或者直接运行脚本autobuild.sh
+添加可执行权限后运行
+chmod +x autobuild.sh
+./autobuild.sh
 ## 使用技术
 + 1 json 序列化与逆序列化
 + 2 c++连接数据库

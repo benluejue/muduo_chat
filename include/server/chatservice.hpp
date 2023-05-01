@@ -9,6 +9,7 @@
 #include "friendmodel.hpp"
 #include "offllinemessagemodel.hpp"
 #include "groupmodel.hpp"
+#include "redis.hpp"
 using namespace std;
 using namespace muduo;
 using namespace muduo::net;
@@ -42,6 +43,10 @@ public:
     void addGroup(const TcpConnectionPtr &conn, json &js, Timestamp time);
     // 群聊天业务
     void groupChat(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 注销
+    void loginout(const TcpConnectionPtr &conn, json &js, Timestamp time);
+    // 给redis的预制回调函数
+    void handleRedisSubscribeMessage(int userid, string msg);
 private:
     ChatService();
     // ~ChatService();
@@ -63,8 +68,9 @@ private:
     mutex _connMtx;
     // groupmode
     GroupModel _groupmodel;
-    
-    
+
+    // ****redis**********
+    Redis _redis;
 };
 
 #endif
