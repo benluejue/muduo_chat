@@ -4,6 +4,8 @@ set -x
 
 rm -rf `pwd`/build/*
 # && 连接两个命令，只有第一个执行后，后面的才执行
+# 执行完毕后删除build下的东西
 cd `pwd`/build &&
     cmake .. &&
-    make
+    make &&
+    rm -rf *

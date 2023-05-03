@@ -6,6 +6,7 @@ cd build
 cmake ..
 make
 cd ../bin
+# 启动mysql redis  nginx
 # 启动服务器
 ./ChatServer 127.0.0.1 6000
 # 启动客户端

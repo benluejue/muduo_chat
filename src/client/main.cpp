@@ -15,6 +15,7 @@ using json = nlohmann::json;
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+// linux的sem
 #include <semaphore.h>
 #include <atomic>
 
@@ -52,7 +53,7 @@ int main(int argc, char **argv)
 {
     if (argc < 3)
     {
-        cerr << "command invalid! example: ./ChatClient 127.0.0.1 6000" << endl;
+        cerr << "command invalid! example: ./ChatClient 127.0.0.1 8000" << endl;
         exit(-1);
     }
 
@@ -130,7 +131,7 @@ int main(int argc, char **argv)
             {
                 cerr << "send login msg error:" << request << endl;
             }
-
+            // 没有通知就一直阻塞
             sem_wait(&rwsem); // 等待信号量，由子线程处理完登录的响应消息后，通知这里
                 
             if (g_isLoginSuccess) 

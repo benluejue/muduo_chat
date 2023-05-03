@@ -27,7 +27,7 @@ void GroupModel::addGroup(int userid, int groupid, string role)
 {
     char sql[1024] = {0};
     // c_str()将string风格转化为c语言的char*风格
-    sprintf(sql, "insert into allgroup values(%d, %d, '%s')",
+    sprintf(sql, "insert into groupuser values(%d, %d, '%s')",
             userid, groupid, role.c_str());
     MySQL mysql;
     if (mysql.connect())

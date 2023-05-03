@@ -30,7 +30,7 @@ ChatService::ChatService()
     _msgHandlerMap.insert({ADD_FRIEND_MSG, std::bind(&ChatService::addFriend, this, _1,_2,_3)});
 
     // 群组消息
-    _msgHandlerMap.insert({GROUP_CHAT_MSG, std::bind(&ChatService::creatGroup, this, _1, _2, _3)});
+    _msgHandlerMap.insert({GROUP_CHAT_MSG, std::bind(&ChatService::groupChat, this, _1, _2, _3)});
     _msgHandlerMap.insert({ADD_GROUP_MSG, std::bind(&ChatService::addGroup, this, _1, _2, _3)});
     _msgHandlerMap.insert({CREATE_GROUP_MSG, std::bind(&ChatService::creatGroup, this, _1, _2,_3)});
 
@@ -143,11 +143,11 @@ void ChatService::login(const TcpConnectionPtr &conn, json &js, Timestamp time)
                     for(GroupUser &user : group.getUsers())
                     {
                         json userjs;
-                        js["id"] = user.getId();
-                        js["name"] = user.getName();
-                        js["state"] = user.getState();
-                        js["role"] = user.getRole();
-                        userV.push_back(js.dump());
+                        userjs["id"] = user.getId();
+                        userjs["name"] = user.getName();
+                        userjs["state"] = user.getState();
+                        userjs["role"] = user.getRole();
+                        userV.push_back(userjs.dump());
                     }
                     js["users"] = userV;
                     groupV.push_back(js.dump());
@@ -291,9 +291,10 @@ void ChatService::addGroup(const TcpConnectionPtr &conn, json &js, Timestamp tim
 // 群组聊天业务
 void ChatService::groupChat(const TcpConnectionPtr &conn, json &js, Timestamp time)
 {
-    // 查询除了自己以外的其他群友id
-    int userid = js["userid"];
-    int groupid = js["groupid"];
+    // 查询除了 自己 以外的其他群友id
+    // 自己的id
+    int userid = js["id"].get<int>();
+    int groupid = js["groupid"].get<int>();
     string msg = js["msg"];
     vector<int>userids = _groupmodel.queryGroupUser(userid, groupid);
 
