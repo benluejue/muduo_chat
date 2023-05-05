@@ -343,6 +343,7 @@ void ChatService::loginout(const TcpConnectionPtr &conn, json &js, Timestamp tim
     _usermodel.updateState(user);
 }
 // 给redis的预制回调函数
+// 相当于redis消息发过来了，在这里转发一下
 void ChatService::handleRedisSubscribeMessage(int userid, string msg)
 {
     json js = json::parse(msg.c_str());

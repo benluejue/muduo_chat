@@ -1,32 +1,47 @@
 # 基于C++实现的集群聊天服务器
+项目思维导图
+![客户端思维导图](img/chatclient.png)
+![服务器端思维导图](img/chatserver.png)
 ### 如何运行
 在满足开发环境后
+
 ```sh
 cd build
 cmake ..
 make
 cd ../bin
 # 启动mysql redis  nginx
+sudo service mysql start
+redis-server & 
+cd /usr/local/nginx/sbin
+./nginx
 # 启动服务器
 ./ChatServer 127.0.0.1 6000
 # 启动客户端
 ./ChatClient 127.0.0.1 6000
+
 ```
-或者直接运行脚本autobuild.sh
+或者开启redis和nginx后，直接运行脚本autobuild.sh进行一键编译，
 添加可执行权限后运行
-chmod +x autobuild.sh
-./autobuild.sh
+`1chmod +x autobuild.sh，./autobuild.sh`
 ## 使用技术
 + 1 json 序列化与逆序列化
-+ 2 c++连接数据库
++ 2 c++连接数据库,进行数据库编程
 + 3 单例模式实现ChatService
-+ 4 nginx 负载均衡
++ 4 redis缓冲服务器编程
++ 5 使用nginx对不同服务器进行TCP的负载均衡
++ 6 使用cmake对项目进行编译管理
 ## 实现功能
++ 1 用户注册，登录，群聊，点对点聊天，添加好友，创建群组，离线信息
++ 2 用户根据nginx的负载均衡，登录不同的服务器
++ 3 redis支持在不同服务器登录的用户进行聊天
 ## 开发环境
 + 1 基于WSL2下的Ubuntu 20.04
 + 2 mysql version 2 8.0.32
 + 3 cmake version 3.16.3
 + 4 使用基于boost的muduo库
++ 5 nginx version 1.12.2
++ 6 redis version 7.0.11
 
 ## mysql数据库设置
 ### 表设计

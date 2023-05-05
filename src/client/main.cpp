@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     char *ip = argv[1];
     uint16_t port = atoi(argv[2]);
 
-    // 创建client端的socket
+    // 创建client端的socket SOCK_STREAM
     int clientfd = socket(AF_INET, SOCK_STREAM, 0);
     if (-1 == clientfd)
     {
@@ -284,7 +284,7 @@ void doLoginResponse(json &responsejs)
     }
 }
 
-// 子线程 - 接收线程
+// 子线程 接收消息的线程
 void readTaskHandler(int clientfd)
 {
     for (;;)
@@ -400,6 +400,7 @@ void mainMenu(int clientfd)
     help();
 
     char buffer[1024] = {0};
+    // isMainMenuRunning 确保在运行
     while (isMainMenuRunning)
     {
         cin.getline(buffer, 1024);
@@ -421,7 +422,7 @@ void mainMenu(int clientfd)
             continue;
         }
 
-        // 调用相应命令的事件处理回调，mainMenu对修改封闭，添加新功能不需要修改该函数p
+        // 调用相应命令的事件处理回调，mainMenu对修改封闭，添加新功能不需要修改该函数
         it->second(clientfd, commandbuf.substr(idx + 1, commandbuf.size() - idx)); // 调用命令处理方法
     }
 }
